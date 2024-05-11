@@ -11,9 +11,9 @@ async function readLibroConFiltros(query) {
 }
 
 async function createLibro(datos) {
-    const { nombre, id, tipo, descripción, precio, autor, idAutor } = datos;
+    const { nombre, id, tipo, descripción, precio, autor, stock } = datos;
 
-    if (id == null || idAutor == null || autor == null || precio == null) {
+    if (id == null || stock == null || autor == null || precio == null) {
         throwCustomError(501, "Ausencia de alguno de los datos requeridos");
     }
 
@@ -26,26 +26,26 @@ async function createLibro(datos) {
 }
 
 
-function updateProducto(datos) {
+function updateLibro(datos) {
     const { _id, ...cambios } = datos;
 
     // hacer llamado a base de datos con el filtro de tipo
-    const productoCreado = updateProductoMongo(_id, cambios);
+    const LibroModficado = updateLibroMongo(_id, cambios);
 
-    return productoCreado;
+    return LibroModficado;
 }
 
-function deleteProducto(id) {
+function deleteLibro(id) {
 
     // hacer llamado a base de datos con el filtro de tipo
-    const productoCreado = deleteProductoMongo(id);
+    const LibroBorrador = deleteLibroMongo(id);
 
-    return productoCreado;
+    return LibroBorrador;
 }
 
 module.exports = {
-    readProductoConFiltros,
-    createProducto,
-    updateProducto,
-    deleteProducto
+    readLibroConFiltros,
+    createLibro,
+    updateLibro,
+    deleteLibro
 }

@@ -1,14 +1,13 @@
 const express = require('express')
 const router = express.Router();
-const { readLibroConFiltros, createLibro, updateLibro, deleteLibro } = require("./Libro.controller");
+const { readUsuarioConFiltros, createUsuario, updateUsuario, deleteUsuario } = require("./Usuario.controller");
 const { respondWithError } = require('../utils/functions');
+const argon2 = require('argon2');
 
-async function GetLibros(req, res) {
+async function GetUsuarios(req, res) {
     try {
         // llamada a controlador con los filtros
-        const { id } = req.params;
-        const libro = libros.find((book) => book.id === id);
-        const resultadosBusqueda = await readLibroConFiltros(req.query);
+        const resultadosBusqueda = await readUsuarioConFiltros(req.query);
 
         res.status(200).json({
             ...resultadosBusqueda
@@ -18,10 +17,11 @@ async function GetLibros(req, res) {
     }
 }
 
-async function PostLibro(req, res) {
+async function PostUsuario(req, res) {
+
     try {
         // llamada a controlador con los datos
-        await createLibro(req.body);
+        await createUsuario(req.body);
 
         res.status(200).json({
             mensaje: "Exito. 👍"
@@ -32,10 +32,10 @@ async function PostLibro(req, res) {
 }
 
 
-async function PatchLibros(req, res) {
+async function PatchUsuarios(req, res) {
     try {
         // llamada a controlador con los datos
-        updateLibro(req.body);
+        updateUsuario(req.body);
 
         res.status(200).json({
             mensaje: "Exito. 👍"
@@ -46,10 +46,10 @@ async function PatchLibros(req, res) {
 }
 
 
-async function DeleteLibros(req, res) {
+async function DeleteUsuarios(req, res) {
     try {
         // llamada a controlador con los datos
-        deleteLibro(req.params.id);
+        deleteUsuario(req.params.id);
 
         res.status(200).json({
             mensaje: "Exito. 👍"
@@ -59,10 +59,10 @@ async function DeleteLibros(req, res) {
     }
 }
 
-router.get("/libros/:id", GetLibros);
-router.post("/", PostLibro);
-router.patch("/", PatchLibros);
-router.delete("/:id", DeleteLibros);
+router.get("/", GetUsuarios);
+router.post("/", PostUsuario);
+router.patch("/", PatchUsuarios);
+router.delete("/:id", DeleteUsuarios);
 
 
 module.exports = router;

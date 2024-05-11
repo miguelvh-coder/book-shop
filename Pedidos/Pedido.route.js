@@ -6,8 +6,6 @@ const { respondWithError } = require('../utils/functions');
 async function GetLibros(req, res) {
     try {
         // llamada a controlador con los filtros
-        const { id } = req.params;
-        const libro = libros.find((book) => book.id === id);
         const resultadosBusqueda = await readLibroConFiltros(req.query);
 
         res.status(200).json({
@@ -59,7 +57,7 @@ async function DeleteLibros(req, res) {
     }
 }
 
-router.get("/libros/:id", GetLibros);
+router.get("/", GetLibros);
 router.post("/", PostLibro);
 router.patch("/", PatchLibros);
 router.delete("/:id", DeleteLibros);

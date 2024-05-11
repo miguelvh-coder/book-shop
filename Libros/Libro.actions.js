@@ -1,5 +1,13 @@
 const Libro = require("./Libro.model")
 
+
+//buscar libro por id
+async function findLibrobyId (id){
+    const book = await Libro.findOne({ id });
+
+    if (book != null) return book;
+}
+
 async function getLibroMongo(filtros) {
     const cantidad = await Libro.countDocuments(filtros);
     const librosFiltrados = await Libro.find(filtros);
@@ -31,6 +39,7 @@ async function deleteLibroMongo(id) {
 }
 
 module.exports = {
+    findLibrobyId,
     createLibroMongo,
     getLibroMongo,
     updateLibroMongo,
