@@ -1,59 +1,61 @@
 const Usuario = require("./Usuarios.model")
 
 
-async function findUserbyEmail (email){
+async function findUserbyEmailMongo (email){
     const user = await Usuario.findOne({ email });
 
     if (user != null) return user;
-}
+}//L
 
-async function findUserbyId (id){
+//Encontrar usuario no eliminado por id
+async function findUserbyIdMongo (id,  showDeleted = false){
     const user = await Usuario.findOne({ id });
 
-    if (user != null) return user;
-}
+    if (user != null && (showDeleted || !user?.isDeleted)) return user;
+}//L
 
 
-async function getUsuarioMongo(filtros) {
-    const cantidad = await Usuario.countDocuments(filtros);
-    const UsuariosFiltrados = await Usuario.find(filtros);
+//buscar varios usuarios
+async function getUsuarioMongo(showDeleted = false) {
+    
+    if (showDeleted) {
+        return await User.find();
+    }else {
+        return await User.find({ isDeleted: false });
+    }
+}//L
 
-    return {
-        resultados: UsuariosFiltrados,
-        paginaMax: cantidadUsuarios / 20,
-        paginaActual: 1,
-        cantidadUsuarios: cantidad
-    };
-}
+async function createUsuarioMongo(userData) {
 
-async function createUsuarioMongo(datos) {
+    const user_c = await findUserbyEmailMongo(userData.email);
 
-    const user_c = await findUserbyEmail(userData.email);
-
-    if (user != null){
+    if (user_c != null){
         throw new AppError(`User with email '${userData.email}' already exists`, status.CONFLICT);
     }
-    datos.contraseña = await argon2.hash(datos.contraseña);
-    const UsuarioCreado = await Usuario.create(datos);
+
+    userData.contraseña = await argon2.hash(userData.contraseña);
+    const UsuarioCreado = await Usuario.create(userData);
     
     return UsuarioCreado;
-}
+} //L
+
+
 
 async function updateUsuarioMongo(id, cambios) {
-    const resultado = await Usuario.findByIdAndUpdate(id, cambios);
+    const Actualizado = await Usuario.findByIdAndUpdate(id, cambios);
 
-    return resultado
-}
+    return Actualizado;
+}//L
 
 async function deleteUsuarioMongo(id) {
-    const resultado = await Usuario.findByIdAndDelete(id);
+    const resultado = await Usuario.findByIdAndUpdate(userId, { "isDeleted": true });
     
     return resultado;
-}
+}//L
 
 module.exports = {
-    findUserbyEmail,
-    findUserbyId,
+    findUserbyEmailMongo,
+    findUserbyIdMongo,
     createUsuarioMongo,
     getUsuarioMongo,
     updateUsuarioMongo,

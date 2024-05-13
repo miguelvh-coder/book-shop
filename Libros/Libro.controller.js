@@ -1,24 +1,30 @@
 const { throwCustomError } = require("../utils/functions");
-const { createLibroMongo, getLibroMongo, updateLibroMongo, deleteLibroMongo } = require("./Libro.actions");
+const { findLibroByIdMongo, createLibroMongo, getLibrosMongo, updateLibroMongo, deleteLibroMongo } = require("./Libro.actions");
+
+
+async function findLibrobyId (id){
+
+    const book = await findLibroByIdMongo(id);
+    return book;
+}//L
+
 
 async function readLibroConFiltros(query) {
-    const { nombre, id, tipo, descripción, precio, autor, idAutor } = query;
 
-    // hacer llamado a base de datos con el filtro de tipo
-    const resultadosBusqueda = await getLibroMongo(query);
-
+    const libros = await getLibrosMongo(query);
     return resultadosBusqueda;
 }
 
 async function createLibro(datos) {
-    const { nombre, id, tipo, descripción, precio, autor, stock } = datos;
+    const { nombre, id, genero, descripción, precio, autor } = datos;
 
     if (id == null || stock == null || autor == null || precio == null) {
         throwCustomError(501, "Ausencia de alguno de los datos requeridos");
     }
 
-    const LibroSimilar = await getLibroMongo({tipo});
+    const { userId } = req.decodeToken;
 
+    const book = await bookService.createBook(userId, req.body);
     // hacer llamado a base de datos con el filtro de tipo
     const LibroCreado = await createLibroMongo(datos);
 
@@ -27,23 +33,27 @@ async function createLibro(datos) {
 
 
 function updateLibro(datos) {
-    const { _id, ...cambios } = datos;
+    const { idUsuario } = datos.decodeToken;
+    const { idLibro } = datos.params;
+    const { ...cambios } = datos;
 
     // hacer llamado a base de datos con el filtro de tipo
-    const LibroModficado = updateLibroMongo(_id, cambios);
+    const LibroModficado = updateLibroMongo(idUsuario, idLibro, cambios);
 
     return LibroModficado;
 }
 
-function deleteLibro(id) {
-
+function deleteLibro(datos) {
     // hacer llamado a base de datos con el filtro de tipo
-    const LibroBorrador = deleteLibroMongo(id);
+    const { idUsuario } = datos.decodeToken;
+    const { idLibro } = datos.params;
+    const LibroBorrador = deleteLibroMongo(idUsuario, idLibro);
 
     return LibroBorrador;
 }
 
 module.exports = {
+    findLibrobyId,
     readLibroConFiltros,
     createLibro,
     updateLibro,

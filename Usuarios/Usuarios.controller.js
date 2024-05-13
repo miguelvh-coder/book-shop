@@ -1,21 +1,33 @@
 const { throwCustomError } = require("../utils/functions");
-const { findUserbyEmail, findUserbyId,createUsuarioMongo, getUsuarioMongo, updateUsuarioMongo, deleteUsuarioMongo } = require("./Usuario.actions");
+const { findUserbyEmailMongo, findUserbyIdMongo, createUsuarioMongo, getUsuarioMongo, updateUsuarioMongo, deleteUsuarioMongo } = require("./Usuario.actions");
 const argon2 = require('argon2');
 
+//leer varios ususarios
+async function readUsuarios(query) {
 
-async function readUsuarioConFiltros(query) {
-    const { nombre, contraseña, id, email, edad, direccion } = query;
-
-    // hacer llamado a base de datos con el filtro de tipo
-    const resultadosBusqueda = await getUsuarioMongo(query);
+    const { showDeleted } = query;
+    const resultadosBusqueda = await getUsuarioMongo(showDeleted);
 
     return resultadosBusqueda;
-}
+}//L
+
+
+//leer un ususario por id
+async function readUsuarioById(query) {
+
+    const { userId } = query;
+    const { showDeleted } = query;
+    const resultadosBusqueda = await findUserbyIdMongo(userId, showDeleted);
+
+    return resultadosBusqueda;
+}//L
+
+
 
 async function createUsuario(datos) {
-    const { nombre, contraseña, id, email, edad, direccion } = datos;
+    const { idUsuario, nombre, email, contraseña, edad, direccion, isDeleted } = datos;
 
-    if (nombre == null || contraseña == null || email == null || id == null || direccion == null) {
+    if (nombre == null || contraseña == null || email == null || idUsuario == null || direccion == null) {
         throwCustomError(501, "Ausencia de alguno de los datos requeridos");
     }
 
@@ -23,23 +35,20 @@ async function createUsuario(datos) {
         throwCustomError(501, "edad invalida");
     }
 
-    const UsuarioSimilar = await getUsuarioMongo({tipo});
-
     // hacer llamado a base de datos con el filtro de tipo
     const UsuarioCreado = await createUsuarioMongo(datos);
 
-    return LibroUsuario;
-}
+    return UsuarioCreado;
+}//L
 
 
 function updateUsuario(datos) {
-    const { _id, ...cambios } = datos;
 
-    // hacer llamado a base de datos con el filtro de tipo
-    const UsuarioModficado = updateUsuarioMongo(_id, cambios);
+    const { idUsuario, ...cambios } = datos;
+    const UsuarioActualizado = updateUsuarioMongo(idUsuario, cambios);
 
-    return UsuarioModficado;
-}
+    return UsuarioActualizado;
+}//L
 
 function deleteUsuario(id) {
 
@@ -47,10 +56,11 @@ function deleteUsuario(id) {
     const UsuarioBorrador = deleteUsuarioMongo(id);
 
     return UsuarioBorrador;
-}
+}//L
 
 module.exports = {
-    readUsuarioConFiltros,
+    readUsuarios,
+    readUsuarioById,
     createUsuario,
     updateUsuario,
     deleteUsuario
