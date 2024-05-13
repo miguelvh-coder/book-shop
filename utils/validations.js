@@ -105,14 +105,18 @@ const bookValidations = {
 }
 
 
-const orderValidation = {
+const orderValidations = {
     "createOrder": [
         body("Libros")
             .exists().withMessage("Lista de libros requerida")
             .isArray({ min: 1 }).withMessage("La lista debe contener al menos 1 elemento"),
         body("Libros.*")
             .isMongoId().withMessage("Todos los elementos deben ser ids.")
-    ]
+    ],
+    "orderId": [
+        param("orderId")
+            .isMongoId().withMessage("Id de pedido invalida")
+    ],
 }
 
 
@@ -128,6 +132,6 @@ module.exports = {
     authValidations,
     userValidations,
     bookValidations,
-    orderValidation,
+    orderValidations,
     Deleted
 }

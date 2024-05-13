@@ -1,55 +1,58 @@
 const { throwCustomError } = require("../utils/functions");
-const { createPedidoMongo, getPedidoMongo, updatePedidoMongo, deletePedidoMongo } = require("./Pedido.actions");
+const { readPedidosMongo, readPedidoIdMongo, createPedidoMongo, updatePedidoMongo } = require("./Pedido.actions");
 
-async function readPedidoConFiltros(query) {
-    const { id, item, precio, id_vendedor, id_comprador } = query;
+async function readPedidos(query) {
 
-    // hacer llamado a base de datos con el filtro de tipo
-    const resultadosBusqueda = await getPedidoMongo(query);
+    const { estado, libros, precio } = query;
+
+    const { userId } = req.decodeToken;
+
+    const resultadosBusqueda = await readPedidosMongo( userId, estado, libros, precio );
 
     return resultadosBusqueda;
 }
 
-async function createPedido(datos) {
-    const { id, item, precio, id_vendedor, id_comprador } = datos;
 
-    if (id == null || id_vendedor == null || id_comprador == null || precio == null || precio == null) {
-        throwCustomError(501, "Ausencia de alguno de los datos requeridos");
-    }
 
-    if (precio < 0 ) {
-        throwCustomError(501, "precio inválido");
-    }
+async function readPedidoById(query) {
+    
+    const { idUsuario } = query.decodeToken;
+    const { idPedido } = req.params;
 
-    const PedidoSimilar = await getPedidoMongo({tipo});
+    const resultadosBusqueda = await readPedidoIdMongo(idUsuario, idPedido);
 
-    // hacer llamado a base de datos con el filtro de tipo
-    const PedidoCreado = await createPedidoMongo(datos);
+    return resultadosBusqueda;
+}
+
+
+
+async function createPedido(req) {
+
+    const { idUsuario } = req.decodeToken;
+    const { Libros: idLibro } = req.body;
+
+    const PedidoCreado = await createPedidoMongo(idUsuario, idLibro);
 
     return PedidoCreado;
 }
 
 
 function updatePedido(datos) {
-    const { _id, ...cambios } = datos;
+
+    const { idUsuario } = datos.decodeToken;
+    const { idPedido } = datos.params;
+    const { Estado: estado } = datos.body;
 
     // hacer llamado a base de datos con el filtro de tipo
-    const PedidoModficado = updatePedidoMongo(_id, cambios);
+    const PedidoModficado = updatePedidoMongo(idUsuario, idPedido, estado);
 
     return PedidoModficado;
 }
 
-function deletePedido(id) {
-
-    // hacer llamado a base de datos con el filtro de tipo
-    const PedidoBorrador = deletePedidoMongo(id);
-
-    return PedidoBorrador;
-}
 
 module.exports = {
-    readPedidoConFiltros,
+    readPedidos,
+    readPedidoById,
     createPedido,
     updatePedido,
-    deletePedido
 }

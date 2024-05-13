@@ -14,7 +14,6 @@ async function GetUsuarios(req, res) {
         // llamada a controlador con los filtros
         Deleted.showDeleted
         validate
-        userController.getAllUsers
         const resultadosBusqueda = await readUsuarios(req.query);
 
         res.status(200).json({
@@ -67,7 +66,7 @@ async function PatchUsuarios(req, res) {
         userValidations.update;
         validate;
 
-        catchError(auth);//En caso de que no se haya autenticado la sesión del usuario
+        respondWithError(auth);//En caso de que no se haya autenticado la sesión del usuario
         updateUsuario(req.body);
 
         res.status(200).json({
@@ -83,7 +82,7 @@ async function DeleteUsuarios(req, res) {
     try {
         // llamada a controlador con los datos
         validate;
-        catchError(auth);//En caso de que no se haya autenticado la sesión del usuario
+        respondWithError(auth);//En caso de que no se haya autenticado la sesión del usuario
 
         const { idUsuario } = req.decodeToken;
         deleteUsuario(idUsuario);

@@ -1,38 +1,81 @@
-const Pedido = require("./Pedido.model")
+const Pedido = require("./Pedido.model");
 
-async function getPedidoMongo(filtros) {
-    const cantidad = await Pedido.countDocuments(filtros);
-    const PedidosFiltrados = await Pedido.find(filtros);
+const findUserbyIdMongo = require('../Usuarios/Usuarios.actions');
+const findLibroByIdMongo = require('../Libros/Libro.actions');
 
-    return {
-        resultados: PedidosFiltrados,
-        //paginaMax: cantidadProductos / 20,
-        //paginaActual: 1,
-        cantidadPedidos: cantidad
-    };
+async function readPedidosMongo(idUsuario, Estado, libros, precio) {
+
+    const user = await findUserbyIdMongo(idUsuario);
+
+    if (user == null){throw new respondWithError(`El usuario actual es inexistente`, status.NOT_FOUND);}
+
+    const filter = {};
+
+    if (Estado) {filter.estado = Estado;}
+
+    return await Pedido.find(filter);
 }
 
-async function createPedidoMongo(datos) {
-    const PedidoCreado = await Pedido.create(datos);
-    
-    return PedidoCreado;
+
+async function readPedidoIdMongo(idUsuario, idPedido) {
+
+    const user = await findUserbyIdMongo(idUsuario);
+
+    if (user == null){ throw new respondWithError(`El usuario actual es inexistente`, status.NOT_FOUND);}
+
+    const pedido = await Pedido.findById(idPedido);
+
+    if (pedido == null){throw new respondWithError(`Pedido no encontrado`, status.NOT_FOUND);}
+    if (!(user.equals(Pedido.Vendedor) || user.equals(Pedido.Comprador))){throw new respondWithError(`Acceso no autorizado`, status.FORBIDDEN);}
+
+    return pedido;
 }
 
-async function updatePedidoMongo(id, cambios) {
-    const resultado = await Pedido.findByIdAndUpdate(id, cambios);
+
+
+async function createPedidoMongo(idUsuario, idLibro) {
+
+    const comprador = await findUserbyIdMongo(idUsuario);
+    const libros = [];
+
+    for (let id of idLibro) {
+        const lib = await findLibroByIdMongo(id);
+
+        if (lib == null) {throw new respondWithError(`Libro con id no encontrada`, status.NOT_FOUND);}
+
+        if (vendedor == null) {
+            vendedor = await findLibroByIdMongo(lib.Dueño);
+            if (vendedor == null) {
+                throw new respondWithError(`Vendedor no encontrado`, status.NOT_FOUND);
+            }
+        }
+
+        libros.push(lib);
+    }
+
+    return await Pedido.create({ comprador, vendedor, libros });
+}
+
+async function updatePedidoMongo(idUsuario, idPedido, Estado) {
+
+    const usuario = await findLibroByIdMongo(idUsuario);
+    const pedido = await Pedido.findById(idPedido);
+
+    if (usuario == null) { throw new respondWithError(`El usuario actual es inexistente`, status.NOT_FOUND);}
+
+    if (pedido == null) { throw new AppError(`El pedido actual es inexistente`, status.NOT_FOUND);}
+
+    if (pedido.estado == "COMPLETED" || pedido.estado == "CANCELED"){throw new AppError(`La orden actual ya ha sido finalizada`, status.NOT_FOUND);}
+
+    const resultado = await Pedido.findByIdAndUpdate(idPedido, { estado: Estado });
 
     return resultado
 }
 
-async function deletePedidoMongo(id) {
-    const resultado = await Pedido.findByIdAndDelete(id);
-    
-    return resultado;
-}
 
 module.exports = {
+    readPedidosMongo,
+    readPedidoIdMongo,
     createPedidoMongo,
-    getPedidoMongo,
-    updatePedidoMongo,
-    deletePedidoMongo
+    updatePedidoMongo
 };

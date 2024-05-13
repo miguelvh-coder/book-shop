@@ -1,4 +1,5 @@
 const Usuario = require("./Usuarios.model")
+const { respondWithError } = require("../utils/functions");
 
 
 async function findUserbyEmailMongo (email){
@@ -30,7 +31,7 @@ async function createUsuarioMongo(userData) {
     const user_c = await findUserbyEmailMongo(userData.email);
 
     if (user_c != null){
-        throw new AppError(`User with email '${userData.email}' already exists`, status.CONFLICT);
+        throw new respondWithError(`User with email '${userData.email}' already exists`, status.CONFLICT);
     }
 
     userData.contraseña = await argon2.hash(userData.contraseña);

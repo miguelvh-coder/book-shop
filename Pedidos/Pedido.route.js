@@ -1,12 +1,18 @@
 const express = require('express')
 const router = express.Router();
-const { readLibroConFiltros, createLibro, updateLibro, deleteLibro } = require("./Libro.controller");
+
+const { readPedidos, readPedidoById, createPedido, updatePedido } = require("./Pedido.controller");
 const { respondWithError } = require('../utils/functions');
 
-async function GetLibros(req, res) {
+const { orderValidations, Deleted } = require('../utils/validations');
+
+async function GetPedidos(req, res) {
     try {
         // llamada a controlador con los filtros
-        const resultadosBusqueda = await readLibroConFiltros(req.query);
+        validate;
+        respondWithError(auth)
+
+        const resultadosBusqueda = await readPedidos(req.query);
 
         res.status(200).json({
             ...resultadosBusqueda
@@ -16,13 +22,17 @@ async function GetLibros(req, res) {
     }
 }
 
-async function PostLibro(req, res) {
+async function GetPedidoById(req, res) {
     try {
         // llamada a controlador con los datos
-        await createLibro(req.body);
+        orderValidations.orderId;
+        validate;
+        respondWithError(auth)
+
+        const resultado = await readPedidoById(req.query);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...resultado
         })
     } catch(e) {
         respondWithError(res, e);
@@ -30,13 +40,35 @@ async function PostLibro(req, res) {
 }
 
 
-async function PatchLibros(req, res) {
+
+async function PostPedido(req, res) {
     try {
         // llamada a controlador con los datos
-        updateLibro(req.body);
+        orderValidations.createOrder;
+        validate;
+        respondWithError(auth); //verificar auntenticidad de la sesion del usuario
+
+        const ordenado = await createPedido(req);
+        res.status(200).json({
+            ...ordenado
+        })
+    } catch(e) {
+        respondWithError(res, e);
+    }
+}//L
+
+
+
+async function PatchPedido(req, res) {
+    try {
+        // llamada a controlador con los datos
+        orderValidations.orderId;
+        validate;
+        respondWithError(auth);
+        const pedidoModificado = await updatePedido(req);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...pedidoModificado
         })
     } catch(e) {
         respondWithError(res, e);
@@ -44,23 +76,11 @@ async function PatchLibros(req, res) {
 }
 
 
-async function DeleteLibros(req, res) {
-    try {
-        // llamada a controlador con los datos
-        deleteLibro(req.params.id);
 
-        res.status(200).json({
-            mensaje: "Exito. 👍"
-        })
-    } catch(e) {
-        respondWithError(res, e);
-    }
-}
-
-router.get("/", GetLibros);
-router.post("/", PostLibro);
-router.patch("/", PatchLibros);
-router.delete("/:id", DeleteLibros);
+router.get("/", GetPedidos);
+router.get("/:isPedido", GetPedidoById);
+router.post("/", PostPedidos);
+router.patch("/", PatchPedidos);
 
 
 module.exports = router;

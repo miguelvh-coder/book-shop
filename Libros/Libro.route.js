@@ -57,7 +57,7 @@ async function PostLibro(req, res) {
         // llamada a controlador con los datos
         bookValidations.createLibro;
         validate;
-        catchError(auth); //verificar auntenticidad de la sesion del usuario
+        respondWithError(auth); //verificar auntenticidad de la sesion del usuario
 
         await createLibro(req.body);
         res.status(200).json({
@@ -75,7 +75,7 @@ async function PatchLibros(req, res) {
         bookValidations.bookId;
         bookValidations.updateBook;
         validate;
-        catchError(auth);
+        respondWithError(auth);
 
         await updateLibro(req.body);
 
@@ -93,7 +93,7 @@ async function DeleteLibros(req, res) {
         // llamada a controlador con los datos
         bookValidations.bookId;
         validate;
-        catchError(auth);
+        respondWithError(auth);
         
         deleteLibro(req);
 

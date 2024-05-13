@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const schemaProducto = new mongoose.Schema({
-    id: {type: Number, required: true},
+    idPedido: {type: Number, required: true},
     Vendedor: {type: mongoose.Types.ObjectId, ref: "User"},
     comprador: {type: mongoose.Types.ObjectId, ref: "User"},
-    stado: {
+    estado: {
       type: String,enum: ['IN PROGRESS', 'CANCELED', 'COMPLETED'],default: 'IN PROGRESS'
     },
-    books: [{type: mongoose.Types.ObjectId, ref: "Book" }],
+    libros: [{type: mongoose.Types.ObjectId, ref: "Libro" }],
     precio: {type: Number, required: true},
   }, 
   {

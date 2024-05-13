@@ -1,6 +1,7 @@
 const Libro = require("./Libro.model")
+const { respondWithError } = require("../utils/functions");
 
-const findUserbyId = require('../Usuarios/Usuarios.actions');
+const findUserbyIdMongo = require('../Usuarios/Usuarios.actions');
 
 
 //buscar libro por id
@@ -12,7 +13,7 @@ async function findLibroByIdMongo (id){
 
 //crear libro
 async function createLibroMongo(user_id , datos) {
-    const Dueño = await userService.findUserbyId(user_Id);
+    const Dueño = await findUserbyIdMongo(user_Id);
     const LibroCreado = await Libro.create(Dueño, ...datos);
     
     return LibroCreado;
@@ -45,15 +46,15 @@ async function updateLibroMongo(bookId, userId, cambios) {
     const user = await findUserbyId(userId);
 
     if (book == null && book?.isDeleted == false){
-        throw new AppError(`El libro solicitado no existe`, status.NOT_FOUND);
+        throw new respondWithError(`El libro solicitado no existe`, status.NOT_FOUND);
     }
 
     if (user == null && user?.isDeleted == false){
-        throw new AppError(`El usuarios actual no existe`, status.NOT_FOUND);
+        throw new respondWithError(`El usuarios actual no existe`, status.NOT_FOUND);
     }
 
     if (!user.idUsuario.equals(book.user)){
-        throw new AppError(`No posee permisos de modificación sobre el libro seleccionado`, status.FORBIDDEN);
+        throw new respondWithError(`No posee permisos de modificación sobre el libro seleccionado`, status.FORBIDDEN);
     }
 
     return await findByIdAndUpdate(bookId, bookData);
