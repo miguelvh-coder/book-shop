@@ -78,9 +78,9 @@ async function PatchPedido(req, res) {
 
 
 router.get("/", GetPedidos);
-router.get("/:isPedido", GetPedidoById);
+router.get("/:idPedido", GetPedidoById);
 router.post("/", PostPedidos);
-router.patch("/", PatchPedidos);
+router.patch("/:idPedido", PatchPedidos);
 
 
 module.exports = router;
