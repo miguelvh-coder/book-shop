@@ -48,8 +48,8 @@ async function updateUsuarioMongo(id, cambios) {
     return Actualizado;
 }//L
 
-async function deleteUsuarioMongo(id) {
-    const resultado = await Usuario.findByIdAndUpdate(userId, { "isDeleted": true });
+async function deleteUsuarioMongo(idUsuario) {
+    const resultado = await Usuario.findByIdAndUpdate(idUsuario, { "isDeleted": true });
     
     return resultado;
 }//L

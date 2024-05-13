@@ -47,10 +47,10 @@ async function GetOneUsuario(req, res) {
 async function PostUsuario(req, res) {
     try {
         // llamada a controlador con los datos
-        await createUsuario(req.body);
+        const usuario = await createUsuario(req.body);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...usuario
         })
     } catch(e) {
         respondWithError(res, e);
@@ -67,10 +67,10 @@ async function PatchUsuarios(req, res) {
         validate;
 
         respondWithError(auth);//En caso de que no se haya autenticado la sesión del usuario
-        updateUsuario(req.body);
+        const usuarioAct = await updateUsuario(req.body);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...usuarioAct
         })
     } catch(e) {
         respondWithError(res, e);
@@ -85,10 +85,10 @@ async function DeleteUsuarios(req, res) {
         respondWithError(auth);//En caso de que no se haya autenticado la sesión del usuario
 
         const { idUsuario } = req.decodeToken;
-        deleteUsuario(idUsuario);
+        const usuarioBorrador = await deleteUsuario(idUsuario);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...usuarioBorrador
         })
     } catch(e) {
         respondWithError(res, e);

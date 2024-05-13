@@ -20,7 +20,7 @@ async function GetLibros(req, res) {
         if (!libros) {
             res.status(404).json({ error: 'Libros no encontrados' });
         } else {
-            res.json(libro);
+            res.json(libros);
         }
 
     } catch(e) {
@@ -59,9 +59,9 @@ async function PostLibro(req, res) {
         validate;
         respondWithError(auth); //verificar auntenticidad de la sesion del usuario
 
-        await createLibro(req.body);
+        const libro = await createLibro(req.body);
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...libro
         })
     } catch(e) {
         respondWithError(res, e);
@@ -77,10 +77,10 @@ async function PatchLibros(req, res) {
         validate;
         respondWithError(auth);
 
-        await updateLibro(req.body);
+        const libroAct = await updateLibro(req.body);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...libroAct
         })
     } catch(e) {
         respondWithError(res, e);
@@ -95,10 +95,10 @@ async function DeleteLibros(req, res) {
         validate;
         respondWithError(auth);
         
-        deleteLibro(req);
+        const libroBorrador =await deleteLibro(req);
 
         res.status(200).json({
-            mensaje: "Exito. 👍"
+            ...libroBorrador
         })
     } catch(e) {
         respondWithError(res, e);

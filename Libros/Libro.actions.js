@@ -12,8 +12,8 @@ async function findLibroByIdMongo (id){
 
 
 //crear libro
-async function createLibroMongo(user_id , datos) {
-    const Dueño = await findUserbyIdMongo(user_Id);
+async function createLibroMongo(idUsusario , datos) {
+    const Dueño = await findUserbyIdMongo(idUsusario);
     const LibroCreado = await Libro.create(Dueño, ...datos);
     
     return LibroCreado;
@@ -21,7 +21,7 @@ async function createLibroMongo(user_id , datos) {
 
 
 //Libros y filtros
-async function getLibrosMongo(filtros) {
+async function getLibrosMongo(query) {
 
     const { nombre, id, genero, descripción, precio, autor } = query;
     const filter = {};
@@ -57,7 +57,7 @@ async function updateLibroMongo(bookId, userId, cambios) {
         throw new respondWithError(`No posee permisos de modificación sobre el libro seleccionado`, status.FORBIDDEN);
     }
 
-    return await findByIdAndUpdate(bookId, bookData);
+    return await findByIdAndUpdate(bookId, cambios);
 
 }//L
 
